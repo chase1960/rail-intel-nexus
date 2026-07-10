@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as SourcesRouteImport } from './routes/sources'
+import { Route as ImpactRouteImport } from './routes/impact'
 import { Route as EvidenceRouteImport } from './routes/evidence'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as IndexRouteImport } from './routes/index'
@@ -23,6 +24,11 @@ const TasksRoute = TasksRouteImport.update({
 const SourcesRoute = SourcesRouteImport.update({
   id: '/sources',
   path: '/sources',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImpactRoute = ImpactRouteImport.update({
+  id: '/impact',
+  path: '/impact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EvidenceRoute = EvidenceRouteImport.update({
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/events': typeof EventsRoute
   '/evidence': typeof EvidenceRoute
+  '/impact': typeof ImpactRoute
   '/sources': typeof SourcesRoute
   '/tasks': typeof TasksRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/events': typeof EventsRoute
   '/evidence': typeof EvidenceRoute
+  '/impact': typeof ImpactRoute
   '/sources': typeof SourcesRoute
   '/tasks': typeof TasksRoute
 }
@@ -60,21 +68,30 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/events': typeof EventsRoute
   '/evidence': typeof EvidenceRoute
+  '/impact': typeof ImpactRoute
   '/sources': typeof SourcesRoute
   '/tasks': typeof TasksRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/events' | '/evidence' | '/sources' | '/tasks'
+  fullPaths: '/' | '/events' | '/evidence' | '/impact' | '/sources' | '/tasks'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/events' | '/evidence' | '/sources' | '/tasks'
-  id: '__root__' | '/' | '/events' | '/evidence' | '/sources' | '/tasks'
+  to: '/' | '/events' | '/evidence' | '/impact' | '/sources' | '/tasks'
+  id:
+    | '__root__'
+    | '/'
+    | '/events'
+    | '/evidence'
+    | '/impact'
+    | '/sources'
+    | '/tasks'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EventsRoute: typeof EventsRoute
   EvidenceRoute: typeof EvidenceRoute
+  ImpactRoute: typeof ImpactRoute
   SourcesRoute: typeof SourcesRoute
   TasksRoute: typeof TasksRoute
 }
@@ -93,6 +110,13 @@ declare module '@tanstack/react-router' {
       path: '/sources'
       fullPath: '/sources'
       preLoaderRoute: typeof SourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/impact': {
+      id: '/impact'
+      path: '/impact'
+      fullPath: '/impact'
+      preLoaderRoute: typeof ImpactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/evidence': {
@@ -123,6 +147,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EventsRoute: EventsRoute,
   EvidenceRoute: EvidenceRoute,
+  ImpactRoute: ImpactRoute,
   SourcesRoute: SourcesRoute,
   TasksRoute: TasksRoute,
 }
