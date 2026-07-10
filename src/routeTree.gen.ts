@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as SourcesRouteImport } from './routes/sources'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TasksRoute = TasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SourcesRoute = SourcesRouteImport.update({
   id: '/sources',
   path: '/sources',
@@ -26,31 +32,42 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/sources': typeof SourcesRoute
+  '/tasks': typeof TasksRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sources': typeof SourcesRoute
+  '/tasks': typeof TasksRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/sources': typeof SourcesRoute
+  '/tasks': typeof TasksRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sources'
+  fullPaths: '/' | '/sources' | '/tasks'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sources'
-  id: '__root__' | '/' | '/sources'
+  to: '/' | '/sources' | '/tasks'
+  id: '__root__' | '/' | '/sources' | '/tasks'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SourcesRoute: typeof SourcesRoute
+  TasksRoute: typeof TasksRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tasks': {
+      id: '/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof TasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sources': {
       id: '/sources'
       path: '/sources'
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SourcesRoute: SourcesRoute,
+  TasksRoute: TasksRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
