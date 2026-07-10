@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as SourcesRouteImport } from './routes/sources'
+import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ImpactRouteImport } from './routes/impact'
 import { Route as EvidenceRouteImport } from './routes/evidence'
 import { Route as EventsRouteImport } from './routes/events'
@@ -24,6 +25,11 @@ const TasksRoute = TasksRouteImport.update({
 const SourcesRoute = SourcesRouteImport.update({
   id: '/sources',
   path: '/sources',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ImpactRoute = ImpactRouteImport.update({
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/events': typeof EventsRoute
   '/evidence': typeof EvidenceRoute
   '/impact': typeof ImpactRoute
+  '/reports': typeof ReportsRoute
   '/sources': typeof SourcesRoute
   '/tasks': typeof TasksRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/events': typeof EventsRoute
   '/evidence': typeof EvidenceRoute
   '/impact': typeof ImpactRoute
+  '/reports': typeof ReportsRoute
   '/sources': typeof SourcesRoute
   '/tasks': typeof TasksRoute
 }
@@ -69,20 +77,36 @@ export interface FileRoutesById {
   '/events': typeof EventsRoute
   '/evidence': typeof EvidenceRoute
   '/impact': typeof ImpactRoute
+  '/reports': typeof ReportsRoute
   '/sources': typeof SourcesRoute
   '/tasks': typeof TasksRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/events' | '/evidence' | '/impact' | '/sources' | '/tasks'
+  fullPaths:
+    | '/'
+    | '/events'
+    | '/evidence'
+    | '/impact'
+    | '/reports'
+    | '/sources'
+    | '/tasks'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/events' | '/evidence' | '/impact' | '/sources' | '/tasks'
+  to:
+    | '/'
+    | '/events'
+    | '/evidence'
+    | '/impact'
+    | '/reports'
+    | '/sources'
+    | '/tasks'
   id:
     | '__root__'
     | '/'
     | '/events'
     | '/evidence'
     | '/impact'
+    | '/reports'
     | '/sources'
     | '/tasks'
   fileRoutesById: FileRoutesById
@@ -92,6 +116,7 @@ export interface RootRouteChildren {
   EventsRoute: typeof EventsRoute
   EvidenceRoute: typeof EvidenceRoute
   ImpactRoute: typeof ImpactRoute
+  ReportsRoute: typeof ReportsRoute
   SourcesRoute: typeof SourcesRoute
   TasksRoute: typeof TasksRoute
 }
@@ -110,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/sources'
       fullPath: '/sources'
       preLoaderRoute: typeof SourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/impact': {
@@ -148,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsRoute: EventsRoute,
   EvidenceRoute: EvidenceRoute,
   ImpactRoute: ImpactRoute,
+  ReportsRoute: ReportsRoute,
   SourcesRoute: SourcesRoute,
   TasksRoute: TasksRoute,
 }
