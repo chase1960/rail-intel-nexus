@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
+import { Route as AuthenticatedSystemStatusRouteImport } from './routes/_authenticated/system-status'
 import { Route as AuthenticatedSourcesRouteImport } from './routes/_authenticated/sources'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedImpactRouteImport } from './routes/_authenticated/impact'
@@ -38,6 +39,12 @@ const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
   path: '/tasks',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSystemStatusRoute =
+  AuthenticatedSystemStatusRouteImport.update({
+    id: '/system-status',
+    path: '/system-status',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSourcesRoute = AuthenticatedSourcesRouteImport.update({
   id: '/sources',
   path: '/sources',
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/impact': typeof AuthenticatedImpactRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/sources': typeof AuthenticatedSourcesRoute
+  '/system-status': typeof AuthenticatedSystemStatusRoute
   '/tasks': typeof AuthenticatedTasksRoute
 }
 export interface FileRoutesByTo {
@@ -81,6 +89,7 @@ export interface FileRoutesByTo {
   '/impact': typeof AuthenticatedImpactRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/sources': typeof AuthenticatedSourcesRoute
+  '/system-status': typeof AuthenticatedSystemStatusRoute
   '/tasks': typeof AuthenticatedTasksRoute
   '/': typeof AuthenticatedIndexRoute
 }
@@ -93,6 +102,7 @@ export interface FileRoutesById {
   '/_authenticated/impact': typeof AuthenticatedImpactRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/sources': typeof AuthenticatedSourcesRoute
+  '/_authenticated/system-status': typeof AuthenticatedSystemStatusRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
 }
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/impact'
     | '/reports'
     | '/sources'
+    | '/system-status'
     | '/tasks'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '/impact'
     | '/reports'
     | '/sources'
+    | '/system-status'
     | '/tasks'
     | '/'
   id:
@@ -126,6 +138,7 @@ export interface FileRouteTypes {
     | '/_authenticated/impact'
     | '/_authenticated/reports'
     | '/_authenticated/sources'
+    | '/_authenticated/system-status'
     | '/_authenticated/tasks'
     | '/_authenticated/'
   fileRoutesById: FileRoutesById
@@ -163,6 +176,13 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/tasks'
       preLoaderRoute: typeof AuthenticatedTasksRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/system-status': {
+      id: '/_authenticated/system-status'
+      path: '/system-status'
+      fullPath: '/system-status'
+      preLoaderRoute: typeof AuthenticatedSystemStatusRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/sources': {
@@ -209,6 +229,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedImpactRoute: typeof AuthenticatedImpactRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedSourcesRoute: typeof AuthenticatedSourcesRoute
+  AuthenticatedSystemStatusRoute: typeof AuthenticatedSystemStatusRoute
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
@@ -219,6 +240,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedImpactRoute: AuthenticatedImpactRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedSourcesRoute: AuthenticatedSourcesRoute,
+  AuthenticatedSystemStatusRoute: AuthenticatedSystemStatusRoute,
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
