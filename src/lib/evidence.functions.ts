@@ -204,7 +204,7 @@ export const verifyEvidence = createServerFn({ method: "POST" })
 
     const detailsJson = {
       source_id: ev.source_id,
-      source_category: category,
+      source_category: String(category ?? ""),
       requires_login: requiresLogin,
       version_count: versionCount ?? 0,
       last_run_id: lastRun?.id ?? null,

@@ -90,7 +90,7 @@ export const testSourceConnection = createServerFn({ method: "POST" })
     let errorCode: string | null = null;
     let errorMessage: string | null = null;
     let logExcerpt: string | null = null;
-    let newStatus: "connected" | "degraded" | "blocked" | "failed" = "failed";
+    let newStatus: "connected" | "degraded" | "blocked" | "failed" | "auth_required" | "login_required" = "failed";
 
     try {
       const controller = new AbortController();
