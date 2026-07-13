@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { MOCK_REPORT_TYPES } from '@/lib/mock-data';
+import { MOCK_REPORT_TYPES } from '@/lib/sample-data';
 import { riskClass, tierClass } from '@/lib/style-helpers';
 import { EVENT_TYPE_LABELS, MODULE_LABELS } from '@/lib/types';
 

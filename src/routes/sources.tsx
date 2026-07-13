@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { ExternalLink, Camera, RefreshCw, Link2 } from 'lucide-react';
-import { MOCK_SOURCES } from '@/lib/mock-data';
+import { MOCK_SOURCES } from '@/lib/sample-data';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
