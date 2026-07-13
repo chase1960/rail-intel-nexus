@@ -106,13 +106,11 @@ export const verifyEvidence = createServerFn({ method: "POST" })
 
     const corroboration: "passed" | "warning" | "unavailable" = "unavailable";
     const conflict: "passed" | "warning" = "passed";
-    const humanReview: "passed" | "requires_manual_review" = "requires_manual_review";
+    const humanReview = "requires_manual_review" as const;
 
     let finalResult: "passed" | "warning" | "blocked" | "requires_manual_review";
     if (blockers.length > 0) finalResult = "blocked";
-    else if (humanReview !== "passed") finalResult = "requires_manual_review";
-    else if ([metadata, content, freshness].some((s) => s === "warning")) finalResult = "warning";
-    else finalResult = "passed";
+    else finalResult = humanReview;
 
     let newVStatus = ev.verification_status;
     const category = source?.category;
