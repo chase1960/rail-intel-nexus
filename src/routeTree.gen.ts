@@ -12,11 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
 import { Route as AuthenticatedSystemStatusRouteImport } from './routes/_authenticated/system-status'
 import { Route as AuthenticatedSourcesRouteImport } from './routes/_authenticated/sources'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
-import { Route as AuthenticatedImpactRouteImport } from './routes/_authenticated/impact'
 import { Route as AuthenticatedEvidenceRouteImport } from './routes/_authenticated/evidence'
 import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
 
@@ -32,11 +30,6 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
-  id: '/tasks',
-  path: '/tasks',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSystemStatusRoute =
@@ -55,11 +48,6 @@ const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedImpactRoute = AuthenticatedImpactRouteImport.update({
-  id: '/impact',
-  path: '/impact',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedEvidenceRoute = AuthenticatedEvidenceRouteImport.update({
   id: '/evidence',
   path: '/evidence',
@@ -76,21 +64,17 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/events': typeof AuthenticatedEventsRoute
   '/evidence': typeof AuthenticatedEvidenceRoute
-  '/impact': typeof AuthenticatedImpactRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/sources': typeof AuthenticatedSourcesRoute
   '/system-status': typeof AuthenticatedSystemStatusRoute
-  '/tasks': typeof AuthenticatedTasksRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/events': typeof AuthenticatedEventsRoute
   '/evidence': typeof AuthenticatedEvidenceRoute
-  '/impact': typeof AuthenticatedImpactRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/sources': typeof AuthenticatedSourcesRoute
   '/system-status': typeof AuthenticatedSystemStatusRoute
-  '/tasks': typeof AuthenticatedTasksRoute
   '/': typeof AuthenticatedIndexRoute
 }
 export interface FileRoutesById {
@@ -99,11 +83,9 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/events': typeof AuthenticatedEventsRoute
   '/_authenticated/evidence': typeof AuthenticatedEvidenceRoute
-  '/_authenticated/impact': typeof AuthenticatedImpactRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/sources': typeof AuthenticatedSourcesRoute
   '/_authenticated/system-status': typeof AuthenticatedSystemStatusRoute
-  '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
@@ -113,21 +95,17 @@ export interface FileRouteTypes {
     | '/auth'
     | '/events'
     | '/evidence'
-    | '/impact'
     | '/reports'
     | '/sources'
     | '/system-status'
-    | '/tasks'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
     | '/events'
     | '/evidence'
-    | '/impact'
     | '/reports'
     | '/sources'
     | '/system-status'
-    | '/tasks'
     | '/'
   id:
     | '__root__'
@@ -135,11 +113,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/events'
     | '/_authenticated/evidence'
-    | '/_authenticated/impact'
     | '/_authenticated/reports'
     | '/_authenticated/sources'
     | '/_authenticated/system-status'
-    | '/_authenticated/tasks'
     | '/_authenticated/'
   fileRoutesById: FileRoutesById
 }
@@ -171,13 +147,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/tasks': {
-      id: '/_authenticated/tasks'
-      path: '/tasks'
-      fullPath: '/tasks'
-      preLoaderRoute: typeof AuthenticatedTasksRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/system-status': {
       id: '/_authenticated/system-status'
       path: '/system-status'
@@ -197,13 +166,6 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/reports'
       preLoaderRoute: typeof AuthenticatedReportsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/impact': {
-      id: '/_authenticated/impact'
-      path: '/impact'
-      fullPath: '/impact'
-      preLoaderRoute: typeof AuthenticatedImpactRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/evidence': {
@@ -226,22 +188,18 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedEventsRoute: typeof AuthenticatedEventsRoute
   AuthenticatedEvidenceRoute: typeof AuthenticatedEvidenceRoute
-  AuthenticatedImpactRoute: typeof AuthenticatedImpactRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedSourcesRoute: typeof AuthenticatedSourcesRoute
   AuthenticatedSystemStatusRoute: typeof AuthenticatedSystemStatusRoute
-  AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEventsRoute: AuthenticatedEventsRoute,
   AuthenticatedEvidenceRoute: AuthenticatedEvidenceRoute,
-  AuthenticatedImpactRoute: AuthenticatedImpactRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedSourcesRoute: AuthenticatedSourcesRoute,
   AuthenticatedSystemStatusRoute: AuthenticatedSystemStatusRoute,
-  AuthenticatedTasksRoute: AuthenticatedTasksRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 
@@ -255,13 +213,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
