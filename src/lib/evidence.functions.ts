@@ -140,7 +140,7 @@ export const verifyEvidence = createServerFn({ method: "POST" })
       verification_status: newVStatus,
       last_verified_at: new Date().toISOString(),
       verification_reason: blockers.length ? `blockers: ${blockers.join(",")}` : `final=${finalResult}`,
-      can_be_policy_evidence: category === "policy" && finalResult === "passed" && source?.is_official === true,
+      can_be_policy_evidence: category === "policy" && (finalResult as string) === "passed" && source?.is_official === true,
     }).eq("id", ev.id);
 
     return run;
