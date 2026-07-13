@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { impactColor, impactLabel } from '@/lib/style-helpers';
 import { MODULE_LABELS, type ProductModule } from '@/lib/types';
 
-export const Route = createFileRoute('/impact')({
+export const Route = createFileRoute('/_authenticated/impact')({
   component: ImpactPage,
 });
 

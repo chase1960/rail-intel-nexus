@@ -9,7 +9,7 @@ import { MODULE_LABELS, STATUS_LABELS, EVENT_TYPE_LABELS, type ProductModule } f
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useState } from 'react';
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/_authenticated/')({
   component: OverviewPage,
 });
 

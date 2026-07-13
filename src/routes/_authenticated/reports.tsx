@@ -13,7 +13,7 @@ import { MOCK_REPORT_TYPES } from '@/lib/sample-data';
 import { riskClass, tierClass } from '@/lib/style-helpers';
 import { EVENT_TYPE_LABELS, MODULE_LABELS } from '@/lib/types';
 
-export const Route = createFileRoute('/reports')({
+export const Route = createFileRoute('/_authenticated/reports')({
   component: ReportsPage,
 });
 

@@ -11,7 +11,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { tierClass, categoryLabel } from '@/lib/style-helpers';
 import type { IntelligenceSource } from '@/lib/types';
 
-export const Route = createFileRoute('/sources')({
+export const Route = createFileRoute('/_authenticated/sources')({
   component: SourcesPage,
 });
 

@@ -17,7 +17,7 @@ interface Search {
   open?: string;
 }
 
-export const Route = createFileRoute('/events')({
+export const Route = createFileRoute('/_authenticated/events')({
   validateSearch: (s: Record<string, unknown>): Search => ({ open: s.open as string | undefined }),
   component: EventsPage,
 });

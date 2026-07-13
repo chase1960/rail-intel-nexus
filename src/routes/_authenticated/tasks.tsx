@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { CollectionTask } from '@/lib/types';
 
-export const Route = createFileRoute('/tasks')({
+export const Route = createFileRoute('/_authenticated/tasks')({
   component: TasksPage,
 });
 

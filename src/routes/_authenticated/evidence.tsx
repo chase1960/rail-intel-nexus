@@ -13,7 +13,7 @@ interface Search {
   open?: string;
 }
 
-export const Route = createFileRoute('/evidence')({
+export const Route = createFileRoute('/_authenticated/evidence')({
   validateSearch: (s: Record<string, unknown>): Search => ({ open: s.open as string | undefined }),
   component: EvidencePage,
 });
