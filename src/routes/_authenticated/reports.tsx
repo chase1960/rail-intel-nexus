@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { UnmigratedBanner } from '@/components/unmigrated-banner';
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { FileBarChart, Copy, FileSpreadsheet, FileDown, Sparkles } from 'lucide-react';
@@ -61,6 +62,7 @@ function ReportsPage() {
     <div className="grid grid-cols-[320px_1fr] gap-6 max-w-[1400px]">
       {/* Config */}
       <div className="space-y-4">
+      <UnmigratedBanner />
         <div>
           <h2 className="text-xl font-semibold">报告生成中心</h2>
           <p className="text-sm text-muted-foreground mt-1">配置左侧,右侧实时预览</p>

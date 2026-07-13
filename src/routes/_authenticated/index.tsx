@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { UnmigratedBanner } from '@/components/unmigrated-banner';
 import { ArrowRight, TrendingUp, AlertTriangle, CheckCircle2, FileText, Users, ClipboardCheck } from 'lucide-react';
 import { useStore } from '@/lib/store';
 import { Card } from '@/components/ui/card';
@@ -32,6 +33,7 @@ function OverviewPage() {
 
   return (
     <div className="space-y-6 max-w-[1400px]">
+      <UnmigratedBanner />
       <div>
         <h2 className="text-xl font-semibold">情报总览</h2>
         <p className="text-sm text-muted-foreground mt-1">今日一句话结论 · 高优先级事件 · 产品影响预览</p>
