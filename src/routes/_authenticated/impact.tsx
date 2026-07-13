@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { UnmigratedBanner } from '@/components/unmigrated-banner';
 import { useState } from 'react';
 import { useStore } from '@/lib/store';
 import { Card } from '@/components/ui/card';
@@ -8,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { impactColor, impactLabel } from '@/lib/style-helpers';
 import { MODULE_LABELS, type ProductModule } from '@/lib/types';
 
-export const Route = createFileRoute('/impact')({
+export const Route = createFileRoute('/_authenticated/impact')({
   component: ImpactPage,
 });
 
@@ -41,6 +42,7 @@ function ImpactPage() {
 
   return (
     <div className="space-y-6 max-w-[1400px]">
+      <UnmigratedBanner />
       <div>
         <h2 className="text-xl font-semibold">产品影响图谱</h2>
         <p className="text-sm text-muted-foreground mt-1">情报事件 × 产品模块 · 把情报转换成产品动作</p>

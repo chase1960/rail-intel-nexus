@@ -1,4 +1,5 @@
 import { createFileRoute, useSearch, useNavigate } from '@tanstack/react-router';
+import { UnmigratedBanner } from '@/components/unmigrated-banner';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { ExternalLink, ShieldCheck, ShieldAlert, Sparkles, Save } from 'lucide-react';
@@ -17,7 +18,7 @@ interface Search {
   open?: string;
 }
 
-export const Route = createFileRoute('/events')({
+export const Route = createFileRoute('/_authenticated/events')({
   validateSearch: (s: Record<string, unknown>): Search => ({ open: s.open as string | undefined }),
   component: EventsPage,
 });
@@ -42,6 +43,7 @@ function EventsPage() {
 
   return (
     <div className="space-y-5 max-w-[1400px]">
+      <UnmigratedBanner />
       <div>
         <h2 className="text-xl font-semibold">情报事件工作台</h2>
         <p className="text-sm text-muted-foreground mt-1">多条信息聚合成的情报事件 · 可编辑 · 可行动</p>

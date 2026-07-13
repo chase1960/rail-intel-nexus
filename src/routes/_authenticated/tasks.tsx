@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { UnmigratedBanner } from '@/components/unmigrated-banner';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { RefreshCw, CheckCircle2, XCircle, Clock } from 'lucide-react';
@@ -9,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { CollectionTask } from '@/lib/types';
 
-export const Route = createFileRoute('/tasks')({
+export const Route = createFileRoute('/_authenticated/tasks')({
   component: TasksPage,
 });
 
@@ -37,6 +38,7 @@ function TasksPage() {
 
   return (
     <div className="space-y-5 max-w-[1400px]">
+      <UnmigratedBanner />
       <div>
         <h2 className="text-xl font-semibold">采集任务</h2>
         <p className="text-sm text-muted-foreground mt-1">今日 12 个采集任务运行结果</p>
