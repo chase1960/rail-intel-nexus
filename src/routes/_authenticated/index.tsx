@@ -156,9 +156,9 @@ function OverviewPage() {
       {/* Impact matrix preview */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-semibold">产品影响矩阵预览</h3>
-          <Button variant="ghost" size="sm" className="text-xs" onClick={() => navigate({ to: '/impact' })}>
-            查看完整图谱 →
+          <h3 className="text-base font-semibold">产品影响矩阵</h3>
+          <Button variant="ghost" size="sm" className="text-xs" onClick={() => navigate({ to: '/events' })}>
+            打开事件工作台 →
           </Button>
         </div>
         <Card className="p-4 overflow-x-auto">

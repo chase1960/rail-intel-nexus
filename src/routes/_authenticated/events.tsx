@@ -25,7 +25,7 @@ export const Route = createFileRoute('/_authenticated/events')({
 
 function EventsPage() {
   const { events, evidence } = useStore();
-  const search = useSearch({ from: '/events' });
+  const search = useSearch({ from: '/_authenticated/events' });
   const navigate = useNavigate();
   const [detail, setDetail] = useState<IntelligenceEvent | null>(null);
 
