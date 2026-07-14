@@ -9,206 +9,180 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as AuthenticatedSystemStatusRouteImport } from './routes/_authenticated/system-status'
-import { Route as AuthenticatedSourcesRouteImport } from './routes/_authenticated/sources'
-import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
-import { Route as AuthenticatedEvidenceRouteImport } from './routes/_authenticated/evidence'
-import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
+import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as SourcesRouteImport } from './routes/sources'
+import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as ImpactRouteImport } from './routes/impact'
+import { Route as EvidenceRouteImport } from './routes/evidence'
+import { Route as EventsRouteImport } from './routes/events'
+import { Route as IndexRouteImport } from './routes/index'
 
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const TasksRoute = TasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedSystemStatusRoute =
-  AuthenticatedSystemStatusRouteImport.update({
-    id: '/system-status',
-    path: '/system-status',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedSourcesRoute = AuthenticatedSourcesRouteImport.update({
+const SourcesRoute = SourcesRouteImport.update({
   id: '/sources',
   path: '/sources',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
+const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedEvidenceRoute = AuthenticatedEvidenceRouteImport.update({
+const ImpactRoute = ImpactRouteImport.update({
+  id: '/impact',
+  path: '/impact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EvidenceRoute = EvidenceRouteImport.update({
   id: '/evidence',
   path: '/evidence',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedEventsRoute = AuthenticatedEventsRouteImport.update({
+const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthenticatedIndexRoute
-  '/auth': typeof AuthRoute
-  '/events': typeof AuthenticatedEventsRoute
-  '/evidence': typeof AuthenticatedEvidenceRoute
-  '/reports': typeof AuthenticatedReportsRoute
-  '/sources': typeof AuthenticatedSourcesRoute
-  '/system-status': typeof AuthenticatedSystemStatusRoute
+  '/': typeof IndexRoute
+  '/events': typeof EventsRoute
+  '/evidence': typeof EvidenceRoute
+  '/impact': typeof ImpactRoute
+  '/reports': typeof ReportsRoute
+  '/sources': typeof SourcesRoute
+  '/tasks': typeof TasksRoute
 }
 export interface FileRoutesByTo {
-  '/auth': typeof AuthRoute
-  '/events': typeof AuthenticatedEventsRoute
-  '/evidence': typeof AuthenticatedEvidenceRoute
-  '/reports': typeof AuthenticatedReportsRoute
-  '/sources': typeof AuthenticatedSourcesRoute
-  '/system-status': typeof AuthenticatedSystemStatusRoute
-  '/': typeof AuthenticatedIndexRoute
+  '/': typeof IndexRoute
+  '/events': typeof EventsRoute
+  '/evidence': typeof EvidenceRoute
+  '/impact': typeof ImpactRoute
+  '/reports': typeof ReportsRoute
+  '/sources': typeof SourcesRoute
+  '/tasks': typeof TasksRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/auth': typeof AuthRoute
-  '/_authenticated/events': typeof AuthenticatedEventsRoute
-  '/_authenticated/evidence': typeof AuthenticatedEvidenceRoute
-  '/_authenticated/reports': typeof AuthenticatedReportsRoute
-  '/_authenticated/sources': typeof AuthenticatedSourcesRoute
-  '/_authenticated/system-status': typeof AuthenticatedSystemStatusRoute
-  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/': typeof IndexRoute
+  '/events': typeof EventsRoute
+  '/evidence': typeof EvidenceRoute
+  '/impact': typeof ImpactRoute
+  '/reports': typeof ReportsRoute
+  '/sources': typeof SourcesRoute
+  '/tasks': typeof TasksRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/auth'
     | '/events'
     | '/evidence'
+    | '/impact'
     | '/reports'
     | '/sources'
-    | '/system-status'
+    | '/tasks'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/auth'
+    | '/'
     | '/events'
     | '/evidence'
+    | '/impact'
     | '/reports'
     | '/sources'
-    | '/system-status'
-    | '/'
+    | '/tasks'
   id:
     | '__root__'
-    | '/_authenticated'
-    | '/auth'
-    | '/_authenticated/events'
-    | '/_authenticated/evidence'
-    | '/_authenticated/reports'
-    | '/_authenticated/sources'
-    | '/_authenticated/system-status'
-    | '/_authenticated/'
+    | '/'
+    | '/events'
+    | '/evidence'
+    | '/impact'
+    | '/reports'
+    | '/sources'
+    | '/tasks'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AuthRoute: typeof AuthRoute
+  IndexRoute: typeof IndexRoute
+  EventsRoute: typeof EventsRoute
+  EvidenceRoute: typeof EvidenceRoute
+  ImpactRoute: typeof ImpactRoute
+  ReportsRoute: typeof ReportsRoute
+  SourcesRoute: typeof SourcesRoute
+  TasksRoute: typeof TasksRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/tasks': {
+      id: '/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof TasksRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/': {
-      id: '/_authenticated/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/system-status': {
-      id: '/_authenticated/system-status'
-      path: '/system-status'
-      fullPath: '/system-status'
-      preLoaderRoute: typeof AuthenticatedSystemStatusRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/sources': {
-      id: '/_authenticated/sources'
+    '/sources': {
+      id: '/sources'
       path: '/sources'
       fullPath: '/sources'
-      preLoaderRoute: typeof AuthenticatedSourcesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      preLoaderRoute: typeof SourcesRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/reports': {
-      id: '/_authenticated/reports'
+    '/reports': {
+      id: '/reports'
       path: '/reports'
       fullPath: '/reports'
-      preLoaderRoute: typeof AuthenticatedReportsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/evidence': {
-      id: '/_authenticated/evidence'
+    '/impact': {
+      id: '/impact'
+      path: '/impact'
+      fullPath: '/impact'
+      preLoaderRoute: typeof ImpactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/evidence': {
+      id: '/evidence'
       path: '/evidence'
       fullPath: '/evidence'
-      preLoaderRoute: typeof AuthenticatedEvidenceRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      preLoaderRoute: typeof EvidenceRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/events': {
-      id: '/_authenticated/events'
+    '/events': {
+      id: '/events'
       path: '/events'
       fullPath: '/events'
-      preLoaderRoute: typeof AuthenticatedEventsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface AuthenticatedRouteRouteChildren {
-  AuthenticatedEventsRoute: typeof AuthenticatedEventsRoute
-  AuthenticatedEvidenceRoute: typeof AuthenticatedEvidenceRoute
-  AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
-  AuthenticatedSourcesRoute: typeof AuthenticatedSourcesRoute
-  AuthenticatedSystemStatusRoute: typeof AuthenticatedSystemStatusRoute
-  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
-}
-
-const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedEventsRoute: AuthenticatedEventsRoute,
-  AuthenticatedEvidenceRoute: AuthenticatedEvidenceRoute,
-  AuthenticatedReportsRoute: AuthenticatedReportsRoute,
-  AuthenticatedSourcesRoute: AuthenticatedSourcesRoute,
-  AuthenticatedSystemStatusRoute: AuthenticatedSystemStatusRoute,
-  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
-}
-
-const AuthenticatedRouteRouteWithChildren =
-  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
-  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AuthRoute: AuthRoute,
+  IndexRoute: IndexRoute,
+  EventsRoute: EventsRoute,
+  EvidenceRoute: EvidenceRoute,
+  ImpactRoute: ImpactRoute,
+  ReportsRoute: ReportsRoute,
+  SourcesRoute: SourcesRoute,
+  TasksRoute: TasksRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

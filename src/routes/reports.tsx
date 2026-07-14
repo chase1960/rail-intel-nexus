@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { UnmigratedBanner } from '@/components/unmigrated-banner';
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { FileBarChart, Copy, FileSpreadsheet, FileDown, Sparkles } from 'lucide-react';
@@ -10,11 +9,11 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { MOCK_REPORT_TYPES } from '@/lib/sample-data';
+import { MOCK_REPORT_TYPES } from '@/lib/mock-data';
 import { riskClass, tierClass } from '@/lib/style-helpers';
 import { EVENT_TYPE_LABELS, MODULE_LABELS } from '@/lib/types';
 
-export const Route = createFileRoute('/_authenticated/reports')({
+export const Route = createFileRoute('/reports')({
   component: ReportsPage,
 });
 
@@ -62,7 +61,6 @@ function ReportsPage() {
     <div className="grid grid-cols-[320px_1fr] gap-6 max-w-[1400px]">
       {/* Config */}
       <div className="space-y-4">
-      <UnmigratedBanner />
         <div>
           <h2 className="text-xl font-semibold">报告生成中心</h2>
           <p className="text-sm text-muted-foreground mt-1">配置左侧,右侧实时预览</p>

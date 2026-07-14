@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import type { IntelligenceEvent, EvidenceItem, CollectionTask, Report } from './types';
-import { MOCK_EVENTS, MOCK_EVIDENCE, MOCK_TASKS, MOCK_REPORTS } from './sample-data';
+import { MOCK_EVENTS, MOCK_EVIDENCE, MOCK_TASKS, MOCK_REPORTS } from './mock-data';
 
 const STORAGE_KEY = 'ttih:v1';
 

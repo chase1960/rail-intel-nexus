@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { UnmigratedBanner } from '@/components/unmigrated-banner';
 import { ArrowRight, TrendingUp, AlertTriangle, CheckCircle2, FileText, Users, ClipboardCheck } from 'lucide-react';
 import { useStore } from '@/lib/store';
 import { Card } from '@/components/ui/card';
@@ -10,7 +9,7 @@ import { MODULE_LABELS, STATUS_LABELS, EVENT_TYPE_LABELS, type ProductModule } f
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useState } from 'react';
 
-export const Route = createFileRoute('/_authenticated/')({
+export const Route = createFileRoute('/')({
   component: OverviewPage,
 });
 
@@ -33,7 +32,6 @@ function OverviewPage() {
 
   return (
     <div className="space-y-6 max-w-[1400px]">
-      <UnmigratedBanner />
       <div>
         <h2 className="text-xl font-semibold">情报总览</h2>
         <p className="text-sm text-muted-foreground mt-1">今日一句话结论 · 高优先级事件 · 产品影响预览</p>
@@ -156,9 +154,9 @@ function OverviewPage() {
       {/* Impact matrix preview */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-semibold">产品影响矩阵</h3>
-          <Button variant="ghost" size="sm" className="text-xs" onClick={() => navigate({ to: '/events' })}>
-            打开事件工作台 →
+          <h3 className="text-base font-semibold">产品影响矩阵预览</h3>
+          <Button variant="ghost" size="sm" className="text-xs" onClick={() => navigate({ to: '/impact' })}>
+            查看完整图谱 →
           </Button>
         </div>
         <Card className="p-4 overflow-x-auto">
