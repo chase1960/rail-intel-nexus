@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "sdk_version": "0.23.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "train-ticket-intel-mcp",
+      "version": "0.1.0",
+      "title": "火车票情报中台 MCP"
+    },
+    "tools": [
+      {
+        "name": "get_overview",
+        "title": "获取情报中台总览",
+        "description": "返回中台运行总览:信息源数量、今日采集任务、生成的证据条目、聚合事件、P1/P2/P3 分布、按类别分布,用于快速掌握当前情报态势。",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_sources",
+        "title": "列出所有信息源",
+        "description": "返回火车票情报中台配置的全部信息源(政策监管/功能竞品/舆论反馈),包括来源等级、采集方式、采集频率与关联事件数。可按 category 过滤。",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "category": {
+              "description": "按情报类型过滤: policy=政策监管, competitor=功能竞品, sentiment=舆论反馈",
+              "type": "string",
+              "enum": [
+                "policy",
+                "competitor",
+                "sentiment"
+              ]
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_evidence",
+        "title": "列出原文证据",
+        "description": "返回中台采集的原文证据(带原文链接、快照、来源等级、是否官方、可否作为政策依据),支持按类别或关键字过滤。",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "category": {
+              "description": "按情报类别过滤",
+              "type": "string",
+              "enum": [
+                "policy",
+                "competitor",
+                "sentiment"
+              ]
+            },
+            "keyword": {
+              "description": "在标题/摘要/关键词中做包含匹配",
+              "type": "string"
+            },
+            "onlyOfficial": {
+              "description": "只返回官方来源的证据",
+              "type": "boolean"
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_events",
+        "title": "列出情报事件",
+        "description": "返回中台聚合出的高价值情报事件(政策变化、竞品功能、舆情热点、投诉高发等)。可按风险等级或事件状态过滤。",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "riskLevel": {
+              "description": "按风险等级过滤",
+              "type": "string",
+              "enum": [
+                "P1",
+                "P2",
+                "P3"
+              ]
+            },
+            "status": {
+              "description": "按事件处理状态过滤",
+              "type": "string",
+              "enum": [
+                "unverified",
+                "confirmed",
+                "lead",
+                "product_review",
+                "in_progress",
+                "done",
+                "watching"
+              ]
+            },
+            "eventType": {
+              "description": "按事件类型过滤",
+              "type": "string",
+              "enum": [
+                "policy_change",
+                "competitor_feature",
+                "sentiment_hot",
+                "complaint_spike",
+                "regulatory_risk",
+                "product_opportunity"
+              ]
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_event",
+        "title": "获取情报事件详情",
+        "description": "根据 eventId 返回完整情报事件,包括产品影响矩阵、推荐动作、可信度维度、以及展开的证据原文列表(来自证据库)。",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "eventId": {
+              "type": "string",
+              "description": "情报事件 ID,例如 evt-01"
+            }
+          },
+          "required": [
+            "eventId"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
