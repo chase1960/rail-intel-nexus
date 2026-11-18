@@ -1,60 +1,102 @@
-import { useSyncExternalStore } from 'react';
-import type { IntelligenceEvent, EvidenceItem, CollectionTask, Report } from './types';
-import { MOCK_EVENTS, MOCK_EVIDENCE, MOCK_TASKS, MOCK_REPORTS } from './mock-data';
+import { useSyncExternalStore } from "react";
+import type {
+  CollectionTask,
+  EvidenceItem,
+  IntelligenceEvent,
+  MemorySnapshot,
+  PipelineRun,
+  Report,
+  SourcePrior,
+} from "./types";
+import { createMemory, applyFeedback, recordRun } from "./engine/memory";
+import { runPipeline, type PipelineOutput, type SourceCoverage } from "./engine/pipeline";
+import { generateReport } from "./engine/report";
+import { SOURCES } from "./engine/source-registry";
 
-const STORAGE_KEY = 'ttih:v1';
+const STORAGE_KEY = "ttih:v2";
 
-interface State {
+export interface StoreState {
+  ready: boolean;
   events: IntelligenceEvent[];
   evidence: EvidenceItem[];
   tasks: CollectionTask[];
   reports: Report[];
+  runs: PipelineRun[];
+  memory: MemorySnapshot;
+  coverage: SourceCoverage[];
+  lastRunId: string | null;
 }
 
-function initialState(): State {
+function emptyState(): StoreState {
   return {
-    events: JSON.parse(JSON.stringify(MOCK_EVENTS)),
-    evidence: JSON.parse(JSON.stringify(MOCK_EVIDENCE)),
-    tasks: JSON.parse(JSON.stringify(MOCK_TASKS)),
-    reports: JSON.parse(JSON.stringify(MOCK_REPORTS)),
+    ready: false,
+    events: [],
+    evidence: [],
+    tasks: [],
+    reports: [],
+    runs: [],
+    memory: createMemory(),
+    coverage: [],
+    lastRunId: null,
   };
 }
 
-let state: State = initialState();
+let state: StoreState = emptyState();
 const listeners = new Set<() => void>();
 
-function load() {
-  if (typeof window === 'undefined') return;
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw) as Partial<State>;
-      state = { ...initialState(), ...parsed };
-    }
-  } catch {
-    /* ignore */
-  }
-}
-
-function persist() {
-  if (typeof window === 'undefined') return;
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch {
-    /* ignore */
-  }
-}
-
 function notify() {
-  persist();
-  listeners.forEach((l) => l());
+  if (typeof window !== "undefined") {
+    try {
+      window.localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ ...state, ready: true, coverage: state.coverage }),
+      );
+    } catch {
+      /* storage full — demo keeps working in memory */
+    }
+  }
+  listeners.forEach((listener) => listener());
 }
 
-let loaded = false;
+function applyOutput(output: PipelineOutput, previous: StoreState): StoreState {
+  return {
+    ready: true,
+    events: output.events,
+    evidence: output.evidence,
+    tasks: output.tasks,
+    reports: [output.report, ...previous.reports].slice(0, 12),
+    runs: [output.run, ...previous.runs].slice(0, 12),
+    memory: output.memory,
+    coverage: output.coverage,
+    lastRunId: output.run.runId,
+  };
+}
+
+let initialized = false;
 function ensureLoaded() {
-  if (loaded) return;
-  loaded = true;
-  load();
+  if (initialized) return;
+  initialized = true;
+
+  // 1) try persisted state
+  if (typeof window !== "undefined") {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<StoreState>;
+        if (parsed.events && parsed.memory) {
+          state = { ...emptyState(), ...parsed, ready: true };
+          return;
+        }
+      }
+    } catch {
+      /* fall through to a fresh run */
+    }
+  }
+
+  // 2) first load: run the pipeline once so the UI never shows mock numbers
+  const output = runPipeline({ mode: "batch" });
+  state = applyOutput(output, state);
+  notify();
 }
 
 export const store = {
@@ -62,59 +104,122 @@ export const store = {
     listeners.add(fn);
     return () => listeners.delete(fn);
   },
-  getSnapshot(): State {
+  getSnapshot(): StoreState {
     ensureLoaded();
     return state;
   },
-  updateEvent(id: string, patch: Partial<IntelligenceEvent>) {
+  /** Re-run the pipeline with the latest memory (what the "运行一次" button calls). */
+  run(mode: "batch" | "manual" | "live" = "manual") {
+    ensureLoaded();
+    const output = runPipeline({ mode, memory: state.memory });
+    state = applyOutput(output, state);
+    notify();
+  },
+  /** Human decision → memory update → re-score (this is the self-evolution loop). */
+  submitFeedback(input: {
+    eventId: string;
+    decision: "confirm" | "reject" | "promote" | "demote";
+    reason: string;
+    actor?: string;
+  }) {
+    ensureLoaded();
+    const event = state.events.find((e) => e.eventId === input.eventId);
+    if (!event) return;
+    const sourceIds = Array.from(
+      new Set(
+        state.evidence
+          .filter((e) => event.relatedEvidenceIds.includes(e.evidenceId))
+          .map((e) => e.sourceId),
+      ),
+    );
+    const memory = applyFeedback(state.memory, {
+      event,
+      decision: input.decision,
+      reason: input.reason,
+      actor: input.actor ?? "内部用户",
+      sourceIds,
+      scoreBefore: event.confidence,
+    });
+    state = { ...state, memory };
+    notify();
+    // re-derive events with the updated priors so the effect is visible immediately
+    const output = runPipeline({ mode: "manual", memory });
+    state = applyOutput(output, state);
+    notify();
+  },
+  updateEvent(eventId: string, patch: Partial<IntelligenceEvent>) {
+    ensureLoaded();
     state = {
       ...state,
       events: state.events.map((e) =>
-        e.eventId === id ? { ...e, ...patch, updatedAt: new Date().toISOString().slice(0, 16).replace('T', ' ') } : e,
+        e.eventId === eventId ? { ...e, ...patch, updatedAt: new Date().toISOString() } : e,
       ),
     };
     notify();
   },
-  updateEvidence(id: string, patch: Partial<EvidenceItem>) {
+  saveReviewNote(eventId: string, note: string) {
+    ensureLoaded();
     state = {
       ...state,
-      evidence: state.evidence.map((e) => (e.evidenceId === id ? { ...e, ...patch } : e)),
+      events: state.events.map((e) =>
+        e.eventId === eventId ? { ...e, reviewNote: note, updatedAt: new Date().toISOString() } : e,
+      ),
+    };
+    notify();
+  },
+  updateEvidence(evidenceId: string, patch: Partial<EvidenceItem>) {
+    ensureLoaded();
+    state = {
+      ...state,
+      evidence: state.evidence.map((e) => (e.evidenceId === evidenceId ? { ...e, ...patch } : e)),
     };
     notify();
   },
   rerunTask(taskId: string) {
-    state = {
-      ...state,
-      tasks: state.tasks.map((t) =>
-        t.taskId === taskId
-          ? {
-              ...t,
-              status: 'success',
-              runTime: new Date().toISOString().slice(0, 16).replace('T', ' '),
-              foundChange: true,
-              rawItemCount: t.rawItemCount + Math.floor(Math.random() * 5) + 1,
-              validItemCount: t.validItemCount + 1,
-              errorMessage: undefined,
-            }
-          : t,
-      ),
-    };
+    // real semantics: re-running a source means re-running the pipeline for that source
+    store.run("manual");
+    return taskId;
+  },
+  addReport(report: Report) {
+    ensureLoaded();
+    state = { ...state, reports: [report, ...state.reports] };
     notify();
   },
-  addReport(r: Report) {
-    state = { ...state, reports: [r, ...state.reports] };
+  regenerateReport(type: "daily" | "weekly" | "topic") {
+    ensureLoaded();
+    const run = state.runs[0];
+    if (!run) return null;
+    const report = generateReport({
+      events: state.events,
+      evidence: state.evidence,
+      run,
+      memory: state.memory,
+      type,
+      now: new Date(),
+    });
+    state = { ...state, reports: [report, ...state.reports].slice(0, 12) };
     notify();
+    return report;
   },
   reset() {
-    state = initialState();
+    const memory = createMemory();
+    const output = runPipeline({ mode: "batch", memory });
+    state = applyOutput(output, emptyState());
     notify();
   },
+  sources: SOURCES,
 };
 
-export function useStore(): State {
-  return useSyncExternalStore(
-    store.subscribe,
-    store.getSnapshot,
-    store.getSnapshot,
-  );
+export function useStore(): StoreState {
+  return useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
 }
+
+export function useMemory(): MemorySnapshot {
+  return useStore().memory;
+}
+
+export function topSourcesByReliability(memory: MemorySnapshot, limit = 5): SourcePrior[] {
+  return [...memory.semantic.sourcePriors].sort((a, b) => b.reliability - a.reliability).slice(0, limit);
+}
+
+export { recordRun };

@@ -12,6 +12,10 @@ import {
   Bell,
   RotateCcw,
   User,
+  GitBranch,
+  Brain,
+  Network,
+  Play,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { store, useStore } from '@/lib/store';
@@ -23,15 +27,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { formatDateTime, weekdayCn } from '@/lib/engine/dates';
 
 const NAV = [
   { to: '/', label: '情报总览', icon: LayoutDashboard },
+  { to: '/pipeline', label: '流水线', icon: GitBranch },
   { to: '/sources', label: '信息源管理', icon: Database },
   { to: '/tasks', label: '采集任务', icon: ListChecks },
   { to: '/evidence', label: '原文证据库', icon: FileText },
   { to: '/events', label: '情报事件工作台', icon: Layers },
   { to: '/impact', label: '产品影响图谱', icon: Grid3x3 },
   { to: '/reports', label: '报告生成中心', icon: FileBarChart },
+  { to: '/memory', label: '记忆中心', icon: Brain },
+  { to: '/architecture', label: '架构与边界', icon: Network },
 ] as const;
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -48,6 +56,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 }
 
 function Sidebar({ pathname }: { pathname: string }) {
+  const { runs } = useStore();
+  const lastRun = runs[0];
   return (
     <aside className="w-60 shrink-0 bg-sidebar text-sidebar-foreground flex flex-col">
       <div className="px-5 py-5 border-b border-sidebar-border">
@@ -61,7 +71,7 @@ function Sidebar({ pathname }: { pathname: string }) {
           </div>
         </div>
       </div>
-      <nav className="flex-1 py-3">
+      <nav className="flex-1 py-3 overflow-y-auto">
         {NAV.map((item) => {
           const active = pathname === item.to;
           const Icon = item.icon;
@@ -81,8 +91,11 @@ function Sidebar({ pathname }: { pathname: string }) {
           );
         })}
       </nav>
-      <div className="px-5 py-4 border-t border-sidebar-border text-[11px] text-sidebar-foreground/50">
-        Demo · v0.1 · Mock 数据
+      <div className="px-5 py-4 border-t border-sidebar-border text-[11px] text-sidebar-foreground/50 space-y-1">
+        <div>v2 · 可审计流水线</div>
+        <div className="truncate">
+          {lastRun ? `最近运行 ${formatDateTime(lastRun.finishedAt)}` : '尚未运行'}
+        </div>
       </div>
     </aside>
   );
@@ -92,7 +105,8 @@ function TopBar() {
   const navigate = useNavigate();
   const [q, setQ] = useState('');
   const [open, setOpen] = useState(false);
-  const { events, evidence, reports } = useStore();
+  const { events, evidence, reports, runs } = useStore();
+  const lastRun = runs[0];
 
   const results = useMemo(() => {
     if (!q.trim()) return null;
@@ -196,10 +210,18 @@ function TopBar() {
         </Popover>
       </div>
       <div className="flex items-center gap-3 ml-auto">
-        <span className="text-xs text-muted-foreground hidden md:inline">2025-07-10 周四</span>
-        <Badge variant="outline" className="text-[10px] bg-amber-50 text-amber-700 border-amber-200">
-          Demo 数据
-        </Badge>
+        <span className="text-xs text-muted-foreground hidden md:inline">
+          {formatDateTime(new Date().toISOString())} {weekdayCn(new Date().toISOString())}
+        </span>
+        {lastRun && (
+          <Badge
+            variant="outline"
+            className="text-[10px] bg-amber-50 text-amber-700 border-amber-200"
+            title={lastRun.dataOrigin === "sample" ? "样本语料，时间相对当前生成" : "实时采集"}
+          >
+            {lastRun.dataOrigin === "sample" ? "样本语料" : "实时采集"}
+          </Badge>
+        )}
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="w-4 h-4" />
           <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full" />
@@ -208,19 +230,30 @@ function TopBar() {
           <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center">
             <User className="w-3.5 h-3.5" />
           </div>
-          <span className="hidden md:inline">产品经理</span>
+          <span className="hidden md:inline">情报运营</span>
         </div>
+        <Button
+          size="sm"
+          className="h-8 gap-1.5 text-xs"
+          onClick={() => {
+            store.run("manual");
+            toast.success("已重新运行流水线：采集 → 去重 → 打分 → 聚合 → 生成报告");
+          }}
+        >
+          <Play className="w-3.5 h-3.5" />
+          运行一次
+        </Button>
         <Button
           variant="outline"
           size="sm"
           className="h-8 gap-1.5 text-xs"
           onClick={() => {
             store.reset();
-            toast.success('Demo 数据已重置');
+            toast.success("已重置：记忆清空并重新生成一轮样本数据");
           }}
         >
           <RotateCcw className="w-3.5 h-3.5" />
-          重置 Demo
+          重置
         </Button>
       </div>
     </header>

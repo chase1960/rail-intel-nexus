@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { impactColor, impactLabel } from '@/lib/style-helpers';
-import { MODULE_LABELS, type ProductModule } from '@/lib/types';
+import { MODULE_LABELS, STATUS_LABELS, type ProductModule } from '@/lib/types';
 
 export const Route = createFileRoute('/impact')({
   component: ImpactPage,
@@ -122,7 +122,7 @@ function ImpactPage() {
                   <td className="px-3 py-2.5"><Badge variant="outline" className="text-[10px]">{o.risk}</Badge></td>
                   <td className="px-3 py-2.5 text-xs text-primary max-w-sm truncate">{o.action}</td>
                   <td className="px-3 py-2.5 text-xs">{o.owner}</td>
-                  <td className="px-4 py-2.5 text-xs">{o.status}</td>
+                  <td className="px-4 py-2.5 text-xs">{STATUS_LABELS[o.status]}</td>
                 </tr>
               ))}
             </tbody>

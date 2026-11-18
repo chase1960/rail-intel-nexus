@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { tierClass, categoryLabel } from '@/lib/style-helpers';
 import type { EvidenceItem, EvidenceStatus } from '@/lib/types';
+import { formatDateTime } from '@/lib/engine/dates';
 
 interface Search {
   open?: string;
@@ -19,14 +20,24 @@ export const Route = createFileRoute('/evidence')({
 });
 
 const STATUS_LABEL: Record<EvidenceStatus, string> = {
-  unverified: '待校验', confirmed: '已确认', lead: '线索', obsolete: '已废弃', conflict: '冲突待处理',
+  unverified: "待校验",
+  verifying: "校验中",
+  verified_online: "在线已核验",
+  verified_snapshot: "快照已核验",
+  lead_only: "仅线索",
+  conflict: "存在冲突",
+  blocked: "不可采信",
+  obsolete: "已失效",
 };
 const STATUS_STYLE: Record<EvidenceStatus, string> = {
-  unverified: 'bg-amber-50 text-amber-700',
-  confirmed: 'bg-emerald-50 text-emerald-700',
-  lead: 'bg-slate-50 text-slate-600',
-  obsolete: 'bg-muted text-muted-foreground',
-  conflict: 'bg-red-50 text-red-700',
+  unverified: "bg-amber-50 text-amber-700",
+  verifying: "bg-sky-50 text-sky-700",
+  verified_online: "bg-emerald-50 text-emerald-700",
+  verified_snapshot: "bg-emerald-50 text-emerald-700",
+  lead_only: "bg-slate-50 text-slate-600",
+  conflict: "bg-red-50 text-red-700",
+  blocked: "bg-rose-100 text-rose-700",
+  obsolete: "bg-muted text-muted-foreground",
 };
 
 function EvidencePage() {
@@ -58,6 +69,7 @@ function EvidencePage() {
               <th className="text-left px-3 py-2.5 font-medium">来源</th>
               <th className="text-left px-3 py-2.5 font-medium">等级</th>
               <th className="text-left px-3 py-2.5 font-medium">发布时间</th>
+              <th className="text-right px-3 py-2.5 font-medium">评分</th>
               <th className="text-left px-3 py-2.5 font-medium">状态</th>
               <th className="text-right px-3 py-2.5 font-medium">引用</th>
               <th className="text-right px-4 py-2.5 font-medium">操作</th>
@@ -78,7 +90,16 @@ function EvidencePage() {
                     {e.isOfficial && <Badge variant="secondary" className="text-[10px]">官方</Badge>}
                   </div>
                 </td>
-                <td className="px-3 py-2.5 text-xs text-muted-foreground">{e.publishedAt}</td>
+                <td className="px-3 py-2.5 text-xs text-muted-foreground">{e.publishedAt ? formatDateTime(e.publishedAt) : "—"}</td>
+                <td className="px-3 py-2.5 text-right text-xs tabular-nums">
+                  {e.score ? (
+                    <span className={e.score.grade === "pass" ? "text-emerald-600" : e.score.grade === "warning" ? "text-amber-600" : "text-rose-600"}>
+                      {e.score.total}
+                    </span>
+                  ) : (
+                    "—"
+                  )}
+                </td>
                 <td className="px-3 py-2.5">
                   <Badge className={`text-[10px] ${STATUS_STYLE[e.verificationStatus]} border-0`}>{STATUS_LABEL[e.verificationStatus]}</Badge>
                 </td>
@@ -132,12 +153,16 @@ function EvidencePage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Button size="sm" variant="outline" className="gap-1.5" onClick={() => window.open(detail.originalUrl, '_blank')}>
-                    <ExternalLink className="w-3.5 h-3.5" /> 打开原文
-                  </Button>
-                  <Button size="sm" variant="outline" className="gap-1.5">
-                    <Camera className="w-3.5 h-3.5" /> 查看截图快照
-                  </Button>
+                  {/^https?:\/\//i.test(detail.originalUrl) ? (
+                    <Button size="sm" variant="outline" className="gap-1.5" onClick={() => window.open(detail.originalUrl, '_blank')}>
+                      <ExternalLink className="w-3.5 h-3.5" /> 打开原文
+                    </Button>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">内部源（{detail.originalUrl}），无公网原文</span>
+                  )}
+                  <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                    <Camera className="w-3.5 h-3.5" /> 快照 {detail.snapshotText.length} 字 · 指纹 {detail.contentHash?.slice(0, 10)} · v{detail.version}
+                  </span>
                 </div>
 
                 <div>
@@ -149,25 +174,50 @@ function EvidencePage() {
 
                 <div className="pt-4 border-t">
                   <div className="text-sm font-medium mb-3 flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-primary" /> 证据校验
+                    <ShieldCheck className="w-4 h-4 text-primary" /> 证据评分（可审计）
                   </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    {[
-                      { label: '来源是否可信', ok: detail.authorityLevel === 'S' || detail.authorityLevel === 'A' },
-                      { label: '是否官方', ok: detail.isOfficial },
-                      { label: '有原文链接', ok: !!detail.originalUrl },
-                      { label: '有采集快照', ok: !!detail.snapshotText },
-                      { label: '多来源印证', ok: detail.quotedByEvents.length > 0 },
-                      { label: '存在冲突', ok: false, invert: true },
-                    ].map((c) => (
-                      <div key={c.label} className={`flex items-center gap-2 px-3 py-2 rounded border ${c.ok ? 'bg-emerald-50/50 border-emerald-200 text-emerald-700' : 'bg-muted/30 border-border text-muted-foreground'}`}>
-                        {c.ok ? <ShieldCheck className="w-3.5 h-3.5" /> : <ShieldAlert className="w-3.5 h-3.5" />}
-                        {c.label}: {c.ok ? '是' : c.invert ? '否' : '待确认'}
-                      </div>
-                    ))}
-                  </div>
+                  {detail.score ? (
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="text-muted-foreground">
+                          <th className="text-left py-1.5 font-normal">维度</th>
+                          <th className="text-right py-1.5 font-normal">权重</th>
+                          <th className="text-right py-1.5 font-normal">得分</th>
+                          <th className="text-left py-1.5 pl-3 font-normal">说明</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {detail.score.dimensions.map((d) => (
+                          <tr key={d.key} className="border-t">
+                            <td className="py-1.5">{d.label}</td>
+                            <td className="py-1.5 text-right tabular-nums">{(d.weight * 100).toFixed(0)}%</td>
+                            <td className="py-1.5 text-right tabular-nums">{d.points}</td>
+                            <td className="py-1.5 pl-3 text-muted-foreground">{d.note}</td>
+                          </tr>
+                        ))}
+                        <tr className="border-t font-medium">
+                          <td className="py-1.5">冲突 / 总分</td>
+                          <td className="py-1.5 text-right">—</td>
+                          <td className="py-1.5 text-right tabular-nums">
+                            {detail.score.conflictPenalty > 0 ? `-${detail.score.conflictPenalty}` : "0"} / {detail.score.total}
+                          </td>
+                          <td className="py-1.5 pl-3 text-muted-foreground">等级 {detail.score.grade}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  ) : (
+                    <div className="text-xs text-muted-foreground">无评分记录。</div>
+                  )}
+                  {(detail.conflictWith?.length ?? 0) > 0 && (
+                    <div className="mt-2 text-xs bg-rose-50 border border-rose-200 text-rose-700 rounded p-2">
+                      与 {detail.conflictWith?.length} 条其他证据存在口径冲突，已隔离，不进入结论。
+                    </div>
+                  )}
                   <div className="mt-3 text-xs bg-blue-50 text-blue-800 p-3 rounded border border-blue-200">
-                    <b>可作为政策依据:</b> {detail.canBePolicyEvidence ? '✅ 可以。官方发布 + 有原文链接 + 有快照。' : '❌ 不能。仅可作为产品线索,不能等同于政策事实。'}
+                    <b>可作为政策依据：</b>{" "}
+                    {detail.canBePolicyEvidence
+                      ? "✅ 可以。官方源 + 高分（pass）+ 无冲突 + 原文可回溯。"
+                      : "❌ 不能。仅可作为产品线索，不能等同于政策事实。"}
                   </div>
                 </div>
 

@@ -12,13 +12,18 @@ export function riskClass(risk: RiskLevel) {
 
 export function statusClass(status: EventStatus) {
   const map: Record<EventStatus, string> = {
-    unverified: 'bg-amber-50 text-amber-700 border-amber-200',
+    new: 'bg-slate-50 text-slate-600 border-slate-200',
+    evidence_check: 'bg-sky-50 text-sky-700 border-sky-200',
+    human_review: 'bg-amber-50 text-amber-700 border-amber-200',
     confirmed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    lead: 'bg-slate-50 text-slate-600 border-slate-200',
     product_review: 'bg-blue-50 text-blue-700 border-blue-200',
+    action_planned: 'bg-blue-50 text-blue-700 border-blue-200',
+    assigned: 'bg-indigo-50 text-indigo-700 border-indigo-200',
     in_progress: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-    done: 'bg-green-50 text-green-700 border-green-200',
+    effect_review: 'bg-teal-50 text-teal-700 border-teal-200',
+    closed: 'bg-slate-100 text-slate-500 border-slate-200',
     watching: 'bg-purple-50 text-purple-700 border-purple-200',
+    invalid_lead: 'bg-rose-50 text-rose-600 border-rose-200',
   };
   return map[status];
 }

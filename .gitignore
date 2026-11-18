@@ -15,6 +15,15 @@ dist-ssr
 .tanstack/**
 .nitro
 *.local
+.tmp
+
+# local env (never commit keys)
+.env
+.env.*
+!.env.example
+
+# npm lockfile is generated locally against a mirror; bun.lock is the source of truth
+package-lock.json
 
 # Wrangler / Cloudflare
 .wrangler/

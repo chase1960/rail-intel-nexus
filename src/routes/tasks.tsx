@@ -29,17 +29,19 @@ function TasksPage() {
   const rerun = (id: string) => {
     setBusy(id);
     setTimeout(() => {
-      store.rerunTask(id);
+      store.run("manual");
       setBusy(null);
-      toast.success('任务已重新执行,发现 1 条新证据');
-    }, 1000);
+      toast.success("已重新运行整条流水线（单源重跑在真实环境需配合任务队列）");
+    }, 300);
   };
 
   return (
     <div className="space-y-5 max-w-[1400px]">
       <div>
         <h2 className="text-xl font-semibold">采集任务</h2>
-        <p className="text-sm text-muted-foreground mt-1">今日 12 个采集任务运行结果</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          本轮 {tasks.length} 个源的实际采集结果：有产出=success，无新增=partial（不是失败，是源可达但无更新）
+        </p>
       </div>
 
       <div className="grid grid-cols-5 gap-3">
